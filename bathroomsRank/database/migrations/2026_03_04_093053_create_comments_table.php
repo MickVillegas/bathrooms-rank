@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('locals', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->id();
             $table->string('nombre_local');
-            $table->string('lugar');
-            $table->string('descripcion');
-            $table->string('valoracion_positiva');
-            $table->string('valoracion_negativa');
+            $table->string('comentario');
+            $table->string('valoracion_dada');
+            $table->string('nombre_usuario');
+            $table->unsignedBigInteger('id_local'); 
+            $table->foreign('id_local')->references('id')->on('locals');
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('locals');
+        Schema::dropIfExists('comments');
     }
 };

@@ -14,7 +14,8 @@ class LocalController extends Controller
             'nombre_local' => $request->nombre_local,
             'lugar' => $request->lugar,
             'descripcion' => $request->descripcion,
-            'valoracion' => "0"
+            'valoracion_positiva' => "0",
+            'valoracion_negativa' => "0"
         ]);
 
         return response()->json(['mensaje' => "Local creado correctamente"], 200);
