@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <h1 id="nombreLocal"></h1>
+    <p id="descripcion"></p>
+    
+    <script>
+
+        async function mostrarInfo() {
+            let busca = await fetch("http://localhost:8000/api/mostrarUnLocal/" + localStorage.getItem("id_local"));
+            let datos = await busca.json();
+
+            document.getElementById("nombreLocal").textContent = datos.nombre_local;
+            document.getElementById("descripcion").textContent = datos.descripcion;
+        }
+
+        mostrarInfo()
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+<body>
+
+    <div class = "container">
+
+    </div>
+
+    <script>
+
+        async function obtenerLocales(){
+            let busca = await fetch("http://localhost:8000/api/mostrarLocales");
+            let datos = await busca.json();
+
+            for (let i = 0; i < datos.data.length; i++) {
+
+                let cards = document.createElement("div");
+                // Eliminamos 'row' del contenedor principal para que la Card mantenga su forma
+                cards.className = "card mb-5 shadow-sm"; 
+                cards.style.width = "70%";
+                cards.style.margin = "0 auto"; // Para centrar la tarjeta en la pantalla
+
+                cards.innerHTML = `
+                  <div class="row g-0 align-items-center">
+                    <div class="col-md-3">
+                      <img src="${datos.data[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
+                    </div>
+
+                    <div class="col-md-6">
+                      <div class="card-body">
+                        <h5 class="card-title">${datos.data[i].nombre_local}</h5>
+                        <p class="card-text">${datos.data[i].descripcion}</p>
+                      </div>
+                    </div>
+
+                    <div class="col-md-3 text-center">
+                      <a href="#" class="btn btn-primary botonVerInformacion" id="${datos.data[i].id}">Ver información</a>
+                    </div>
+                  </div>
+                `;
+
+                let container = document.querySelector(".container");
+                container.appendChild(cards);
+
+            }
+
+            let botones = document.querySelectorAll(".botonVerInformacion");
+            for (let i = 0; i < botones.length; i++) {
+                botones[i].addEventListener("click", verInfo);
+            }
+            console.log("botones " + botones.length);
+            console.log(datos.data.length);
+        }
+
+
+        obtenerLocales()
+
+
+        function verInfo(event){
+            let nodoClick
+            if(event){
+                nodoClick = event.target;
+                localStorage.setItem("id_local", nodoClick.id);
+                window.location.href = "local.html";
+            }
+        }
+
+    </script>
+</body>
+</html>
