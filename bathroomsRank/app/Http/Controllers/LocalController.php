@@ -35,8 +35,7 @@ class LocalController extends Controller
 
     }
 
-
-
+    
     public function mostrarUnLocal($id){
 
         $unLocal = Local::where('id', $id)->first();
@@ -47,5 +46,33 @@ class LocalController extends Controller
 
         return response()->json($unLocal);
         
+    }
+
+    public function unaValoracionPositiva($id){
+        $local = Local::where('id', $id)->first();
+
+        if (!$local) {
+            return response()->json(["respuesta" => "No se ha encontrado el local con el id: $id"], 404);
+        }
+
+        $actual = (int) $local->valoracion_positiva; 
+        $local->valoracion_positiva = (string) ($actual + 1);
+        $local->save();
+
+        return response()->json(["respuesta" => "Valoración positiva añadida correctamente"], 200);
+    }
+
+    public function unaValoracionNegativa($id){
+        $local = Local::where('id', $id)->first();
+
+        if (!$local) {
+            return response()->json(["respuesta" => "No se ha encontrado el local con el id: $id"], 404);
+        }
+
+        $actual = (int) $local->valoracion_negativa;
+        $local->valoracion_negativa = (string) ($actual + 1);
+        $local->save();
+
+        return response()->json(["respuesta" => "Valoración negativa añadida correctamente"], 200);
     }
 }
