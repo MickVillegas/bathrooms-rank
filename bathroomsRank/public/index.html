@@ -9,6 +9,19 @@
 </head>
 <body>
 
+    <header class = "row">
+        <div class = "col-4">
+            <h1>PooRank</h1>
+        </div>
+        <div class = "col-8 row justify-content-end align-items-center" style = "display: flex;">
+
+          <div class="col-4">Inicio</div>
+          <div class="col-4">Ver baños</div>
+          <div class="col-4">Contacto</div>
+
+        </div>
+    </header>
+
     <div class = "container">
 
     </div>
@@ -21,25 +34,73 @@
 
             for (let i = 0; i < datos.data.length; i++) {
 
+
+            const pos = parseInt(datos.data[i].valoracion_positiva) || 0;
+            const neg = parseInt(datos.data[i].valoracion_negativa) || 0;
+            const total = pos + neg;
+            const diferencia = pos - neg;
+
+            let resultadoTexto = "";
+            let colorTexto = "black"; // Color por defecto
+
+            if (total === 0) {
+                resultadoTexto = "Sin valoraciones aún";
+            } 
+            else if (pos === neg) {
+                resultadoTexto = "Neutral";
+                colorTexto = "orange";
+            } 
+            else if (diferencia > 0) {
+                // Es positiva
+                const ratio = pos / total;
+                if (ratio >= 0.8 && total >= 5) {
+                    resultadoTexto = "Muy buena";
+                    colorTexto = "darkgreen";
+                } 
+                else {
+                    resultadoTexto = "Buena";
+                    colorTexto = "green";
+                }
+            } 
+            else {
+                // Es negativa
+                const ratio = neg / total;
+                if (ratio >= 0.8 && total >= 5) {
+                    resultadoTexto = "Muy mala";
+                    colorTexto = "darkred";
+                } 
+                else {
+                    resultadoTexto = "Mala";
+                    colorTexto = "red";
+                }
+            }
+
+
                 let cards = document.createElement("div");
                 // Eliminamos 'row' del contenedor principal para que la Card mantenga su forma
                 cards.className = "card mb-5 shadow-sm"; 
                 cards.style.width = "70%";
                 cards.style.margin = "0 auto"; // Para centrar la tarjeta en la pantalla
-
                 cards.innerHTML = `
                   <div class="row g-0 align-items-center">
                     <div class="col-md-3">
                       <img src="${datos.data[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
                     </div>
-
+                  
                     <div class="col-md-6">
                       <div class="card-body">
-                        <h5 class="card-title">${datos.data[i].nombre_local}</h5>
-                        <p class="card-text">${datos.data[i].descripcion}</p>
+                        <div class="row align-items-center">
+                          <div class="col-8">
+                            <h5 class="card-title mb-0">${datos.data[i].nombre_local}</h5>
+                          </div>
+                          <div class="col-4 text-end">
+                            <span style="color: ${colorTexto}; font-weight: bold;">Valoración: ${resultadoTexto}</span>
+                          </div>
+                        </div>
+                        <hr> <p class="card-text mt-2">${datos.data[i].descripcion}</p>
                       </div>
                     </div>
-
+                  
                     <div class="col-md-3 text-center">
                       <a href="#" class="btn btn-primary botonVerInformacion" id="${datos.data[i].id}">Ver información</a>
                     </div>

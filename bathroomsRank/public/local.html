@@ -51,7 +51,11 @@
 
         <h3 class = "mt-5">Comentarios</h3>
         <hr class = "mb-5">
-        <div class = "comentarios mt-5"></div>
+
+        <div class="mt-5">
+            <div class = "comentariosNuevos"></div>
+            <div class = "comentarios"></div>
+        </div>
 
     </div>
     
@@ -61,22 +65,27 @@
         let nombreLocal;
 
         function valoracionPositiva() {
+
             document.getElementById("like").classList.remove("btn-outline-success");
             document.getElementById("like").classList.add("btn-success");
             valoracion = "positivo";
             document.getElementById("dislike").classList.remove("btn-danger");
             document.getElementById("dislike").classList.add("btn-outline-danger");
+
         }
 
         function valoracionNegativa() {
+
             document.getElementById("dislike").classList.remove("btn-outline-danger");
             document.getElementById("dislike").classList.add("btn-danger");
             valoracion = "negativo";
             document.getElementById("like").classList.remove("btn-success");
             document.getElementById("like").classList.add("btn-outline-success");
+
         }
 
         async function mostrarInfo() {
+
             let busca = await fetch("http://localhost:8000/api/mostrarUnLocal/" + localStorage.getItem("id_local"));
             let datos = await busca.json();
 
@@ -84,32 +93,92 @@
             document.getElementById("descripcion").textContent = datos.descripcion;
             document.getElementById("direccion").textContent = "Dirección: " + datos.lugar;
             document.getElementById("Resenas").textContent = "Reseñas: ";
-            document.getElementById("Valoracion").textContent = "Valoración general: ";
+
+            const pos = parseInt(datos.valoracion_positiva) || 0;
+            const neg = parseInt(datos.valoracion_negativa) || 0;
+            const total = pos + neg;
+            const diferencia = pos - neg;
+
+            let resultadoTexto = "";
+            let colorTexto = "black"; // Color por defecto
+
+            if (total === 0) {
+                resultadoTexto = "Sin valoraciones aún";
+            } 
+            else if (pos === neg) {
+                resultadoTexto = "Neutral";
+                colorTexto = "orange";
+            } 
+            else if (diferencia > 0) {
+                // Es positiva
+                const ratio = pos / total;
+                if (ratio >= 0.8 && total >= 5) {
+                    resultadoTexto = "Muy buena";
+                    colorTexto = "darkgreen";
+                } 
+                else {
+                    resultadoTexto = "Buena";
+                    colorTexto = "green";
+                }
+            } 
+            else {
+                // Es negativa
+                const ratio = neg / total;
+                if (ratio >= 0.8 && total >= 5) {
+                    resultadoTexto = "Muy mala";
+                    colorTexto = "darkred";
+                } 
+                else {
+                    resultadoTexto = "Mala";
+                    colorTexto = "red";
+                }
+            }
+        
+            // 3. Mostrar el resultado en el HTML
+            const spanValoracion = document.getElementById("Valoracion");
+            spanValoracion.textContent = "Valoración general: " + resultadoTexto;
+            spanValoracion.style.color = colorTexto;
+            spanValoracion.style.fontWeight = "bold";
 
             nombreLocal = datos.nombre_local;
+
         }
 
         mostrarInfo()
 
         async function comentarios() {
+
             let buscar = await fetch("http://localhost:8000/api/mostrarComentarios/" + localStorage.getItem("id_local"));
             let datos = await buscar.json();
 
             document.getElementById("Resenas").textContent = "Reseñas: (" + datos.data.length + ")";
-            document.getElementById("Valoracion").textContent = "Valoración general: ";
 
             if(buscar.status === 404){
                 document.querySelector(".comentarios").innerHTML = '<center class = "mb-5"><h3>(No hay comentarios para este local)</h3></center>';
             }
+
             else{
 
                 for (let i = 0; i < datos.data.length; i++) {
 
-                    let comentario = document.createElement("div");
-                    let hr = document.createElement("hr");
-                    comentario.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ datos.data[i].nombre_usuario +'</strong></div><div class = "col-6">Valoración: '+ datos.data[i].valoracion_dada +'</div></div><p>'+ datos.data[i].comentario +'</p>'
-                    document.querySelector(".comentarios").appendChild(comentario);
-                    document.querySelector(".comentarios").appendChild(hr);
+                    if(datos.data[i].valoracion_dada == "positivo"){
+
+                        let comentario = document.createElement("div");
+                        let hr = document.createElement("hr");
+                        comentario.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ datos.data[i].nombre_usuario +'</strong></div><div class = "col-6 text-success"><strong>Valoración: '+ datos.data[i].valoracion_dada +'</strong></div></div><p>'+ datos.data[i].comentario +'</p>'
+                        document.querySelector(".comentarios").appendChild(comentario);
+                        document.querySelector(".comentarios").appendChild(hr);
+
+                    }
+                    else{
+
+                        let comentario = document.createElement("div");
+                        let hr = document.createElement("hr");
+                        comentario.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ datos.data[i].nombre_usuario +'</strong></div><div class = "col-6 text-danger"><strong>Valoración: '+ datos.data[i].valoracion_dada +'</strong></div></div><p>'+ datos.data[i].comentario +'</p>'
+                        document.querySelector(".comentarios").appendChild(comentario);
+                        document.querySelector(".comentarios").appendChild(hr);
+
+                    }
 
                 }
             }
@@ -117,9 +186,9 @@
 
         comentarios()
 
-
-
         async function subirComentario(){
+
+            let seccionComentarios = document.querySelector(".comentariosNuevos");
 
             if(valoracion == "positivo"){
                 await fetch("http://localhost:8000/api/unaValoracionPositiva/" + localStorage.getItem("id_local"), {
@@ -140,6 +209,22 @@
 
             let comentario = document.getElementById("comentario").value;
             let nombre = document.getElementById("nombre").value;
+
+            if(valoracion == "positivo"){
+                let comentarioEnFrontend = document.createElement("div");
+                let hr = document.createElement("hr");
+                comentarioEnFrontend.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ nombre +'</strong></div><div class = "col-6 text-success"><strong>Valoración: '+ valoracion +'</strong></div></div><p>'+ comentario +'</p>'
+                seccionComentarios.appendChild(comentarioEnFrontend);
+                seccionComentarios.appendChild(hr);
+            }
+            else{
+                let comentarioEnFrontend = document.createElement("div");
+                let hr = document.createElement("hr");
+                comentarioEnFrontend.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ nombre +'</strong></div><div class = "col-6 text-danger"><strong>Valoración: '+ valoracion +'</strong></div></div><p>'+ comentario +'</p>'
+                seccionComentarios.appendChild(comentarioEnFrontend);
+                seccionComentarios.appendChild(hr);
+            }
+
 
             const subirCXomentario = {
                 nombre_local: nombreLocal,
