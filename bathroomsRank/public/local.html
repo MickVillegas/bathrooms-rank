@@ -6,8 +6,59 @@
     <title>Document</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+
+<style>
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+ a{
+    font-size: x-large;
+ }
+
+ body{
+display: flex;
+    flex-direction: column;
+    /* 1. Un degradado simple de arriba a abajo */
+    background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 1) 0%, 
+                rgba(168, 206, 255, 1) 50%, 
+                rgba(204, 192, 255, 0.671) 100%);
+    
+    /* 2. Evitamos que el degradado se repita si la página es larga */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+ }
+
+.container {
+    flex: 1;
+}
+
+.datillos{
+    background-color: rgba(255, 255, 255, 0.476);
+}
+
+</style>
+
 </head>
 <body>
+
+    <header class = "mb-5 shadow pt-5 pb-3">
+
+        <div class = "ms-5">
+            <h1>PooRank</h1>
+        </div>
+
+        <div class = "ms-5 row justify-content-end" style = "display: flex;">
+
+          <div class="col-3"><a class="link-dark link-underline link-underline-opacity-0" href="./info.html">Inicio</a></div>
+          <div class="col-3"><a class="link-primary link-underline link-underline-opacity-0" href="./index.html">Ver baños</a></div>
+          <div class="col-3"><a class="link-dark link-underline link-underline-opacity-0" href="#">Contacto</a></div>
+
+        </div>
+
+    </header>
 
     <div class="container">
         <h1 class="mb-3" id="nombreLocal"></h1>
@@ -15,7 +66,7 @@
         <div class="row">
             <img class="col-6" src="./img/taco-bell@2x.jpg" alt="">
 
-            <div class="col-2 offset-4">
+            <div class="col-2 offset-4 shadow pe-5 ps-5 pt-3 datillos">
                 <p class="" id = "direccion"></p>
                 <p class="" id = "Resenas"></p>
                 <p class="" id = "Valoracion"></p>
@@ -58,6 +109,12 @@
         </div>
 
     </div>
+
+    <footer class="pt-5 pb-5">
+        <div class="container">
+            <p class="text-center">&copy; 2026 PooRank. Todos los derechos reservados.</p>
+        </div>
+    </footer>
     
     <script>
 

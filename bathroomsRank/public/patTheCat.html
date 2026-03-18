@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</head>
+<body>
+    
+    <h1 class = "text-center mt-5" >ACARICIA AL GATO</h1>
+    <p class = "text-center mb-5" >Haz clic y mantén presionado para acariciar al gato</p>
+
+    <div class="text-center mt-5">
+        <img src="./img/output-onlinegiftools.png" width="30%" alt="" class = "text-center" id="gato">
+    </div>
+
+<script>
+
+// Crear el audio fuera de la función para reutilizarlo
+const ronroneo = new Audio("./audio/GatoRonroneando.mp3");
+ronroneo.loop = true; // se repite automáticamente
+
+document.getElementById('gato').addEventListener('mousedown', acariciarGato);
+document.getElementById('gato').addEventListener('mouseup', acariciarGato);
+
+
+function acariciarGato(event){
+    let nodoclick = event.target
+
+    if(event.type === 'mousedown'){
+        nodoclick.src = "./img/5fb22etkj6df1.gif"
+        console.log('Acariciando al gato');
+
+        ronroneo.currentTime = 0; // empieza desde el inicio
+        ronroneo.play();
+    } 
+    else if(event.type === 'mouseup'){
+        nodoclick.src = "./img/output-onlinegiftools.png"
+        console.log('Dejaste de acariciar al gato');
+
+        ronroneo.pause();
+        ronroneo.currentTime = 0; // lo reinicia
+    }
+}
+
+
+</script>
+
+</body>
+</html>
