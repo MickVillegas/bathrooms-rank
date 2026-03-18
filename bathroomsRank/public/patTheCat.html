@@ -3,14 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-
+    <title>Acaricia el gato</title>
+        <link rel="icon" type="image/png" href="./img/1905159_31c21.png">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 </head>
 <body>
     
-    <h1 class = "text-center mt-5" >ACARICIA AL GATO</h1>
+    <div class="row">
+        <h1 class = "text-center mt-5 col-4 offset-4" >ACARICIA AL GATO</h1>
+        <div class="dropdown col-4 mt-5">
+          <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center" type="button" id="languageSelector" data-bs-toggle="dropdown" aria-expanded="false">
+            <img src="./img/español.png" alt="ES" class="me-2" style="width: 20px;">
+            Español
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="languageSelector">
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLang('Español', './img/español.png')">
+                <img src="./img/español.png" alt="ES" class="me-2" style="width: 20px;"> Español
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="#" onclick="changeLang('English', './img/ingles.png')">
+                <img src="./img/ingles.png" alt="EN" class="me-2" style="width: 20px;"> English
+              </a>
+            </li>
+          </ul>
+        </div>
+    </div>
     <p class = "text-center mb-5" >Haz clic y mantén presionado para acariciar al gato</p>
 
     <div class="text-center mt-5">
@@ -19,33 +39,52 @@
 
 <script>
 
-// Crear el audio fuera de la función para reutilizarlo
-const ronroneo = new Audio("./audio/GatoRonroneando.mp3");
-ronroneo.loop = true; // se repite automáticamente
+    // Crear el audio fuera de la función para reutilizarlo
+    const ronroneo = new Audio("./audio/GatoRonroneando.mp3");
+    ronroneo.loop = true; // se repite automáticamente
 
-document.getElementById('gato').addEventListener('mousedown', acariciarGato);
-document.getElementById('gato').addEventListener('mouseup', acariciarGato);
+    document.getElementById('gato').addEventListener('mousedown', acariciarGato);
+    document.getElementById('gato').addEventListener('mouseup', acariciarGato);
 
 
-function acariciarGato(event){
-    let nodoclick = event.target
+    function acariciarGato(event){
+        let nodoclick = event.target
 
-    if(event.type === 'mousedown'){
-        nodoclick.src = "./img/5fb22etkj6df1.gif"
-        console.log('Acariciando al gato');
+        if(event.type === 'mousedown'){
+            nodoclick.src = "./img/5fb22etkj6df1.gif"
+            console.log('Acariciando al gato');
 
-        ronroneo.currentTime = 0; // empieza desde el inicio
-        ronroneo.play();
-    } 
-    else if(event.type === 'mouseup'){
-        nodoclick.src = "./img/output-onlinegiftools.png"
-        console.log('Dejaste de acariciar al gato');
+            ronroneo.currentTime = 0; // empieza desde el inicio
+            ronroneo.play();
+        } 
+        else if(event.type === 'mouseup'){
+            nodoclick.src = "./img/output-onlinegiftools.png"
+            console.log('Dejaste de acariciar al gato');
 
-        ronroneo.pause();
-        ronroneo.currentTime = 0; // lo reinicia
+            ronroneo.pause();
+            ronroneo.currentTime = 0; // lo reinicia
+        }
     }
-}
 
+    function changeLang(text, imgSrc) {
+      const btn = document.getElementById('languageSelector');
+      btn.innerHTML = `<img src="${imgSrc}" class="me-2" style="width: 20px;"> ${text}`;
+    
+        if(text === 'English'){
+            document.getElementsByTagName('h1')[0].textContent = 'PET THE CAT';
+            document.getElementsByTagName('p')[0].textContent = 'Click and hold to pet the cat';
+            document.getElementsByTagName('title')[0].textContent = 'Pet the Cat';
+
+        }
+        else{
+            document.getElementsByTagName('h1')[0].textContent = 'ACARICIA AL GATO';
+            document.getElementsByTagName('p')[0].textContent = 'Haz clic y mantén presionado para acariciar al gato';
+            document.getElementsByTagName('title')[0].textContent = 'Acaricia el gato';
+        }
+
+      // Aquí podrías añadir la lógica para cambiar el idioma de tu web
+      console.log("Idioma seleccionado:", text);
+    }
 
 </script>
 
