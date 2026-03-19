@@ -24,7 +24,7 @@ class CommentsController extends Controller
 
     public function mostrarComentarios($id_local){
 
-        $comentarios = Comment::where('id_local', $id_local)->orderBy('id', 'DESC')->paginate();
+        $comentarios = Comment::where('id_local', $id_local)->orderBy('id', 'DESC')->paginate(5);
 
         if($comentarios->isEmpty()){
             return response()->json(["respuesta" => "No hay comentarios para este local, sé el primero en comentar"], 404);

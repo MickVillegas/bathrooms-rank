@@ -149,7 +149,7 @@ display: flex;
             document.getElementById("nombreLocal").textContent = datos.nombre_local;
             document.getElementById("descripcion").textContent = datos.descripcion;
             document.getElementById("direccion").textContent = "Dirección: " + datos.lugar;
-            document.getElementById("Resenas").textContent = "Reseñas: ";
+            //document.getElementById("Resenas").textContent = "Reseñas: ";
 
             const pos = parseInt(datos.valoracion_positiva) || 0;
             const neg = parseInt(datos.valoracion_negativa) || 0;
@@ -203,45 +203,72 @@ display: flex;
 
         mostrarInfo()
 
+        // 1. Variable global para saber qué página cargar
+        let paginaComentarios = 1;
+
         async function comentarios() {
-
-            let buscar = await fetch("http://localhost:8000/api/mostrarComentarios/" + localStorage.getItem("id_local"));
+            let idLocal = localStorage.getItem("id_local");
+            let buscar = await fetch(`http://localhost:8000/api/mostrarComentarios/${idLocal}?page=${paginaComentarios}`);
             let datos = await buscar.json();
-
-            document.getElementById("Resenas").textContent = "Reseñas: (" + datos.data.length + ")";
-
-            if(buscar.status === 404){
-                document.querySelector(".comentarios").innerHTML = '<center class = "mb-5"><h3>(No hay comentarios para este local)</h3></center>';
+        
+            // 2. Mostrar el total real de comentarios (Laravel lo da en datos.total)
+            // Esto solucionará que te marque 8 en lugar de 5
+            if (datos.total !== undefined) {
+                document.getElementById("Resenas").textContent = "Reseñas: (" + datos.total + ")";
             }
+        
+            if (buscar.status === 404 && paginaComentarios === 1) {
+                document.querySelector(".comentarios").innerHTML = '<center class="mb-5"><h3>(No hay comentarios para este local)</h3></center>';
+                return;
+            }
+        
+            // 3. Bucle FOR para añadir comentarios sin borrar los anteriores
+            for (let i = 0; i < datos.data.length; i++) {
+                let comentarioDiv = document.createElement("div");
+                let hr = document.createElement("hr");
 
-            else{
+                // Determinamos la clase de color según la valoración
+                let colorClase = (datos.data[i].valoracion_dada == "positivo") ? "text-success" : "text-danger";
+            
+                comentarioDiv.innerHTML = `
+                    <div class="row">
+                        <div class="col-6"><strong>${datos.data[i].nombre_usuario}</strong></div>
+                        <div class="col-6 ${colorClase}"><strong>Valoración: ${datos.data[i].valoracion_dada}</strong></div>
+                    </div>
+                    <p>${datos.data[i].comentario}</p>
+                `;
+                
+                document.querySelector(".comentarios").appendChild(comentarioDiv);
+                document.querySelector(".comentarios").appendChild(hr);
+            }
+        
+            // 4. Lógica del botón "Ver más"
+            gestionarBotonVerMas(datos);
+        }
 
-                for (let i = 0; i < datos.data.length; i++) {
+        function gestionarBotonVerMas(datos) {
+            // Eliminamos el botón anterior si existe para que no se duplique
+            let botonExistente = document.getElementById("btnCargarMas");
+            if (botonExistente) botonExistente.remove();
+        
+            // Si hay una página siguiente, creamos el botón
+            if (datos.next_page_url !== null) {
+                let btn = document.createElement("button");
+                btn.id = "btnCargarMas";
+                btn.className = "btn btn-outline-secondary d-block mx-auto mb-5";
+                btn.textContent = "Mostrar más comentarios";
 
-                    if(datos.data[i].valoracion_dada == "positivo"){
-
-                        let comentario = document.createElement("div");
-                        let hr = document.createElement("hr");
-                        comentario.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ datos.data[i].nombre_usuario +'</strong></div><div class = "col-6 text-success"><strong>Valoración: '+ datos.data[i].valoracion_dada +'</strong></div></div><p>'+ datos.data[i].comentario +'</p>'
-                        document.querySelector(".comentarios").appendChild(comentario);
-                        document.querySelector(".comentarios").appendChild(hr);
-
-                    }
-                    else{
-
-                        let comentario = document.createElement("div");
-                        let hr = document.createElement("hr");
-                        comentario.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ datos.data[i].nombre_usuario +'</strong></div><div class = "col-6 text-danger"><strong>Valoración: '+ datos.data[i].valoracion_dada +'</strong></div></div><p>'+ datos.data[i].comentario +'</p>'
-                        document.querySelector(".comentarios").appendChild(comentario);
-                        document.querySelector(".comentarios").appendChild(hr);
-
-                    }
-
-                }
+                btn.onclick = function() {
+                    paginaComentarios++; // Incrementamos la página
+                    comentarios();      // Llamamos de nuevo a la función
+                };
+            
+                document.querySelector(".comentarios").appendChild(btn);
             }
         }
 
-        comentarios()
+        // Llamada inicial
+        comentarios();
 
         async function subirComentario(){
 

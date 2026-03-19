@@ -25,7 +25,7 @@ class LocalController extends Controller
 
     public function mostrarLocales(){
 
-         $locales = Local::orderBy('id', 'DESC')->paginate();
+         $locales = Local::orderBy('id', 'DESC')->paginate(5);
 
         if($locales->isEmpty()){
             return response()->json(["respuesta" => "No hay locales en la lista, añade un local a la lista"], 404);
