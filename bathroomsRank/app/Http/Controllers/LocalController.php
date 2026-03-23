@@ -75,4 +75,15 @@ class LocalController extends Controller
 
         return response()->json(["respuesta" => "Valoración negativa añadida correctamente"], 200);
     }
+
+    public function buscarLocal($nombreLocal){
+        $local = Local::where('nombre_local', 'LIKE', "%$nombreLocal%")->get();
+
+        if ($local->isEmpty()) {
+            return response()->json(["respuesta" => "No se ha encontrado ningún local con el nombre: $nombreLocal"], 404);
+        }
+
+        return response()->json($local);
+
+    }
 }

@@ -15,6 +15,7 @@ Route::get('/mostrarLocales', [LocalController::class, 'mostrarLocales']);
 Route::get('/mostrarUnLocal/{id}', [LocalController::class, 'mostrarUnLocal']);
 Route::put('/unaValoracionPositiva/{id}', [LocalController::class, 'unaValoracionPositiva']);
 Route::put('/unaValoracionNegativa/{id}', [LocalController::class, 'unaValoracionNegativa']);
+Route::get("/buscarLocal/{nombre_local}", [LocalController::class, 'buscarLocal']);
 
 Route::post('/crearComentario', [CommentsController::class, 'crearComentario']);
 Route::get('/mostrarComentarios/{id_local}', [CommentsController::class, 'mostrarComentarios']);

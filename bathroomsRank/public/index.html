@@ -3,40 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Ver Baños</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
 
-<style>
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
- a{
-    font-size: x-large;
- }
-
-
- body{
-display: flex;
-    flex-direction: column;
-    /* 1. Un degradado simple de arriba a abajo */
-    background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 1) 0%, 
-                rgba(168, 206, 255, 1) 50%, 
-                rgba(204, 192, 255, 0.671) 100%);
-    
-    /* 2. Evitamos que el degradado se repita si la página es larga */
-    background-repeat: no-repeat;
-    background-attachment: fixed;
- }
-
-.container {
-    flex: 1;
-}
-
-</style>
+        <link rel="stylesheet" href="css/styles.css">
 
 </head>
 <body>
@@ -51,11 +22,29 @@ display: flex;
 
           <div class="col-3"><a class="link-dark link-underline link-underline-opacity-0" href="./info.html">Inicio</a></div>
           <div class="col-3"><a class="link-primary link-underline link-underline-opacity-0" href="./index.html">Ver baños</a></div>
-          <div class="col-3"><a class="link-dark link-underline link-underline-opacity-0" href="#">Contacto</a></div>
+          <div class="col-3"><a class="link-dark link-underline link-underline-opacity-0" href="./contacto.html">Contacto</a></div>
 
         </div>
 
     </header>
+
+    <div class = "container">
+        <div class="row mb-5">
+            <div class="col-4"><hr></div>
+                <h2 class="col-4 text-center">Ver Baños</h2>
+            <div class="col-4"><hr></div>
+        </div>
+    </div>
+
+    <div class="row align-items-center mb-5">
+        <div class="offset-3 col-4">
+            <input type="text" class="form-control" placeholder="Buscar local..." id="inputBusqueda">
+        </div>
+
+        <div class="col-2 text-end">
+            <button class="btn btn-primary w-100" id="botonBusqueda" onclick="buscarLocal()">Buscar</button>
+        </div>
+    </div>
 
     <div class = "container">
 
@@ -67,152 +56,6 @@ display: flex;
         </div>
     </footer>
 
-    <script>
-
-let paginaActual = 1;
-
-async function obtenerLocales(pagina = 1) {
-
-    // 1. Limpiamos el contenedor para que no se acumulen los locales de la página anterior
-    let container = document.querySelector(".container");
-    container.innerHTML = "";
-
-    // 2. Hacemos la petición pasando el parámetro de página
-    let busca = await fetch(`http://localhost:8000/api/mostrarLocales?page=${pagina}`);
-    let datos = await busca.json();
-
-    // IMPORTANTE: Al usar paginate(), los datos reales están en datos.data
-    // Usamos el bucle for tal cual lo tenías, apuntando a datos.data.length
-    for (let i = 0; i < datos.data.length; i++) {
-        
-        // Mantenemos tu lógica de valoraciones
-        const pos = parseInt(datos.data[i].valoracion_positiva) || 0;
-        const neg = parseInt(datos.data[i].valoracion_negativa) || 0;
-        const total = pos + neg;
-        const diferencia = pos - neg;
-
-        let resultadoTexto = "";
-        let colorTexto = "black";
-
-        if (total === 0) {
-            resultadoTexto = "Sin valoraciones aún";
-        } 
-        else if (pos === neg) {
-            resultadoTexto = "Neutral";
-            colorTexto = "orange";
-        } 
-        else if (diferencia > 0) {
-            const ratio = pos / total;
-            if (ratio >= 0.8 && total >= 5) {
-                resultadoTexto = "Muy buena";
-                colorTexto = "darkgreen";
-            } 
-            else {
-                resultadoTexto = "Buena";
-                colorTexto = "green";
-            }
-        } 
-        else {
-            const ratio = neg / total;
-            if (ratio >= 0.8 && total >= 5) {
-                resultadoTexto = "Muy mala";
-                colorTexto = "darkred";
-            } 
-            else {
-                resultadoTexto = "Mala";
-                colorTexto = "red";
-            }
-        }
-
-        // Creamos la card
-        let cards = document.createElement("div");
-        cards.className = "card mb-5 shadow"; 
-        cards.style.width = "70%";
-        cards.style.margin = "0 auto";
-        cards.innerHTML = `
-            <div class="row g-0 align-items-center">
-                <div class="col-md-3">
-                    <img src="${datos.data[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
-                </div>
-                <div class="col-md-6">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-8">
-                                <h5 class="card-title mb-0">${datos.data[i].nombre_local}</h5>
-                            </div>
-                            <div class="col-4 text-end">
-                                <span style="color: ${colorTexto}; font-weight: bold;">Valoración: ${resultadoTexto}</span>
-                            </div>
-                        </div>
-                        <hr> 
-                        <p class="card-text mt-2">${datos.data[i].descripcion}</p>
-                    </div>
-                </div>
-                <div class="col-md-3 text-center">
-                    <a href="#" class="btn btn-primary botonVerInformacion" id="${datos.data[i].id}">Ver información</a>
-                </div>
-            </div>
-        `;
-
-        container.appendChild(cards);
-    }
-
-    // 3. Agregamos los botones de navegación (Siguiente/Anterior)
-    crearBotonesPaginacion(datos);
-
-    // 4. Asignamos los eventos a los botones de "Ver información" (tu bucle for original)
-    let botones = document.querySelectorAll(".botonVerInformacion");
-    for (let i = 0; i < botones.length; i++) {
-        botones[i].addEventListener("click", verInfo);
-    }
-
-    console.log("Locales renderizados: " + datos.data.length);
-    console.log("Página actual: " + datos.current_page);
-}
-
-// Función auxiliar para los botones de pasar página
-function crearBotonesPaginacion(datos) {
-    let container = document.querySelector(".container");
-    let navDiv = document.createElement("div");
-    navDiv.className = "text-center my-4";
-    
-    // Botón Anterior (se deshabilita si no hay página previa)
-    let btnPrev = `<button class="btn btn-outline-primary me-2" id="btnPrev" ${datos.prev_page_url ? "" : "disabled"}>Anterior</button>`;
-    
-    // Texto de página actual
-    let infoPagina = `<span>Página ${datos.current_page} de ${datos.last_page}</span>`;
-    
-    // Botón Siguiente (se deshabilita si no hay más páginas)
-    let btnNext = `<button class="btn btn-outline-primary ms-2" id="btnNext" ${datos.next_page_url ? "" : "disabled"}>Siguiente</button>`;
-
-    navDiv.innerHTML = btnPrev + infoPagina + btnNext;
-    container.appendChild(navDiv);
-
-    // Eventos para los botones
-    document.getElementById("btnPrev").addEventListener("click", () => {
-        paginaActual--;
-        obtenerLocales(paginaActual);
-    });
-
-    document.getElementById("btnNext").addEventListener("click", () => {
-        paginaActual++;
-        obtenerLocales(paginaActual);
-    });
-}
-
-// Ejecución inicial
-obtenerLocales(paginaActual);
-
-
-        function verInfo(event){
-            let nodoClick
-            if(event){
-                nodoClick = event.target;
-                localStorage.setItem("id_local", nodoClick.id);
-                window.location.href = "local.html";
-            }
-        }
-
-    </script>
+    <script src="./js/index.js"></script>
 </body>
 </html>

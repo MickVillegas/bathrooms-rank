@@ -1,0 +1,31 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+ a{
+    font-size: x-large;
+ }
+
+
+ body{
+display: flex;
+    flex-direction: column;
+    /* 1. Un degradado simple de arriba a abajo */
+    background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 1) 0%, 
+                rgba(168, 206, 255, 1) 50%, 
+                rgba(204, 192, 255, 0.671) 100%);
+    
+    /* 2. Evitamos que el degradado se repita si la página es larga */
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+ }
+
+.container {
+    flex: 1;
+}
+
+.datillos{
+    background-color: rgba(255, 255, 255, 0.476);
+}
