@@ -30,6 +30,7 @@
             document.getElementById("nombreLocal").textContent = datos.nombre_local;
             document.getElementById("descripcion").textContent = datos.descripcion;
             document.getElementById("direccion").textContent = "Dirección: " + datos.lugar;
+            document.getElementById("imagenLocal").src = "./storage/" + datos.imagen;
             //document.getElementById("Resenas").textContent = "Reseñas: ";
 
             const pos = parseInt(datos.valoracion_positiva) || 0;

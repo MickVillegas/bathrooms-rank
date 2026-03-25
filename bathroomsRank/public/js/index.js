@@ -61,7 +61,7 @@ async function obtenerLocales(pagina = 1) {
         cards.innerHTML = `
             <div class="row g-0 align-items-center">
                 <div class="col-md-3">
-                    <img src="${datos.data[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
+                    <img src="./storage/${datos.data[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
                 </div>
                 <div class="col-md-6">
                     <div class="card-body">
@@ -78,7 +78,7 @@ async function obtenerLocales(pagina = 1) {
                     </div>
                 </div>
                 <div class="col-md-3 text-center">
-                    <a href="#" class="btn btn-primary botonVerInformacion" id="${datos.data[i].id}">Ver información</a>
+                    <a href="#" class="btn btn-outline-primary botonVerInformacion" id="${datos.data[i].id}">Ver información</a>
                 </div>
             </div>
         `;
@@ -206,7 +206,7 @@ obtenerLocales(paginaActual);
                         cards.innerHTML = `
                             <div class="row g-0 align-items-center">
                                 <div class="col-md-3">
-                                    <img src="${datos[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
+                                    <img src="./storage/${datos[i].imagen}" class="img-fluid rounded-start" alt="Imagen local">
                                 </div>
                                 <div class="col-md-6">
                                     <div class="card-body">

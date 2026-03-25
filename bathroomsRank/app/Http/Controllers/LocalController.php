@@ -8,19 +8,35 @@ use \App\Models\Local;
 
 class LocalController extends Controller
 {
-    public function crearLocal(Request $request){
+public function crearLocal(Request $request){
+    // 1. Validamos que el archivo sea una imagen (máximo 2MB en este ejemplo)
+    $request->validate([
+        'nombre_local' => 'required|string',
+        'lugar' => 'required|string',
+        'descripcion' => 'required|string',
+        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+    ]);
 
-        Local::create([
-            'nombre_local' => $request->nombre_local,
-            'lugar' => $request->lugar,
-            'descripcion' => $request->descripcion,
-            'valoracion_positiva' => "0",
-            'valoracion_negativa' => "0"
-        ]);
+    $rutaImagen = null;
 
-        return response()->json(['mensaje' => "Local creado correctamente"], 200);
-
+    // 2. Comprobamos si viene una imagen en la petición
+    if ($request->hasFile('imagen')) {
+        // Guarda la imagen en storage/app/public/locales y devuelve la ruta
+        $rutaImagen = $request->file('imagen')->store('locales', 'public');
     }
+
+    // 3. Creamos el registro con la ruta de la imagen
+    Local::create([
+        'nombre_local' => $request->nombre_local,
+        'lugar' => $request->lugar,
+        'descripcion' => $request->descripcion,
+        'valoracion_positiva' => "0",
+        'valoracion_negativa' => "0",
+        'imagen' => $rutaImagen // Aquí guardamos el string con la ruta
+    ]);
+
+    return response()->json(['mensaje' => "Local creado correctamente"], 200);
+}
 
 
     public function mostrarLocales(){
@@ -48,6 +64,7 @@ class LocalController extends Controller
         
     }
 
+
     public function unaValoracionPositiva($id){
         $local = Local::where('id', $id)->first();
 
@@ -61,6 +78,7 @@ class LocalController extends Controller
 
         return response()->json(["respuesta" => "Valoración positiva añadida correctamente"], 200);
     }
+
 
     public function unaValoracionNegativa($id){
         $local = Local::where('id', $id)->first();
@@ -76,6 +94,7 @@ class LocalController extends Controller
         return response()->json(["respuesta" => "Valoración negativa añadida correctamente"], 200);
     }
 
+    
     public function buscarLocal($nombreLocal){
         $local = Local::where('nombre_local', 'LIKE', "%$nombreLocal%")->get();
 

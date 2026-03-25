@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('descripcion');
             $table->string('valoracion_positiva');
             $table->string('valoracion_negativa');
+            $table->string('imagen')->nullable();
         });
     }
 

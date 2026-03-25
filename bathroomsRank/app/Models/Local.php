@@ -15,7 +15,13 @@ class Local extends Model
 
     use HasFactory;
 
-    protected $fillable = ['nombre_local', 'lugar', 'descripcion', 'valoracion_positiva', 'valoracion_negativa'];
+    protected $fillable = ['nombre_local', 'lugar', 'descripcion', 'valoracion_positiva', 'valoracion_negativa', 'imagen'];
     public $timestamps = false;
+
+    protected function imagen(): Attribute{
+        return Attribute::make(
+            get: fn ($value) => $value ? asset(Storage::url($value)) : null,
+        );
+    }
     
 }

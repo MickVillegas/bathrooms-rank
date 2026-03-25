@@ -34,6 +34,12 @@ http://localhost:8000/api/crearLocal
   "descripcion": "otro local de mc dolands"
 }
 
+{
+  "nombre_local": "Taco Bell",
+  "lugar": "CC Mediterraneo",
+  "descripcion": "¿Te gusta el taco?"
+}
+
 
 
 
