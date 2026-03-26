@@ -39,19 +39,18 @@
 
         <h3 class = "text-center">¿No aparece su local favorito? Escriba aquí su sugerencia.</h3>
 
-        <form action="" class="mb-5">
-            <div class="mb-3">
-                <label for="nombreLocal" class="form-label">Nombre del local</label>
-                <input type="text" class="form-control" id="nombreLocal" placeholder="Ej: McDonald's">
-            </div>
-
-            <div class="mb-3">
-                <label for="direccionLocal" class="form-label">Dirección del local</label>
-                <input type="text" class="form-control" id="direccionLocal" placeholder="Ej: Calle Gran Vía, 28, Madrid">
-            </div>
-
-            <button type="submit" class="btn btn-primary">Enviar sugerencia</button>
-        </form>
+<form action="{{ route('enviar.sugerencia') }}" method="POST" class="mb-5">
+    @csrf
+    <div class="mb-3">
+        <label for="nombreLocal" class="form-label">Nombre del local</label>
+        <input type="text" name="nombreLocal" class="form-control" id="nombreLocal" required>
+    </div>
+    <div class="mb-3">
+        <label for="direccionLocal" class="form-label">Dirección del local</label>
+        <input type="text" name="direccionLocal" class="form-control" id="direccionLocal" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Enviar sugerencia</button>
+</form>
 
         <h3 class = "text-center mb-5">También se puede poner en contacto con nosotros por:</h3>
 
@@ -67,6 +66,24 @@
             <p class="text-center">&copy; 2026 PooRank. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if(session('status'))
+<script>
+    Swal.fire({
+        title: '¡Correo enviado!',
+        text: '{{ session('status') }}',
+        icon: 'success',
+        confirmButtonText: 'Volver al inicio',
+        confirmButtonColor: '#0d6efd', // El azul de tu botón primario
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = "/info.html";
+        }
+    });
+</script>
+@endif
 
 </body>
 </html>
