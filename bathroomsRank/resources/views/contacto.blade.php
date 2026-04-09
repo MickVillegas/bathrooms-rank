@@ -39,18 +39,35 @@
 
         <h3 class = "text-center">¿No aparece su local favorito? Escriba aquí su sugerencia.</h3>
 
-<form action="{{ route('enviar.sugerencia') }}" method="POST" class="mb-5">
-    @csrf
-    <div class="mb-3">
-        <label for="nombreLocal" class="form-label">Nombre del local</label>
-        <input type="text" name="nombreLocal" class="form-control" id="nombreLocal" required>
-    </div>
-    <div class="mb-3">
-        <label for="direccionLocal" class="form-label">Dirección del local</label>
-        <input type="text" name="direccionLocal" class="form-control" id="direccionLocal" required>
-    </div>
-    <button type="submit" class="btn btn-primary">Enviar sugerencia</button>
-</form>
+        <form action="{{ route('enviar.sugerencia') }}" method="POST" class="mb-5">
+            @csrf
+            
+            <div class="mb-3">
+                <label for="nombreLocal" class="form-label">Nombre del local</label>
+                
+                @error('nombreLocal')
+                    <div class="text-danger small mb-1"><strong>{{ $message }}</strong></div>
+                @enderror
+                
+                <input type="text" name="nombreLocal" 
+                       class="form-control @error('nombreLocal') is-invalid @enderror" 
+                       id="nombreLocal" value="{{ old('nombreLocal') }}">
+            </div>
+        
+            <div class="mb-3">
+                <label for="direccionLocal" class="form-label">Dirección del local</label>
+                
+                @error('direccionLocal')
+                    <div class="text-danger small mb-1"><strong>{{ $message }}</strong></div>
+                @enderror
+                
+                <input type="text" name="direccionLocal" 
+                       class="form-control @error('direccionLocal') is-invalid @enderror" 
+                       id="direccionLocal" value="{{ old('direccionLocal') }}">
+            </div>
+        
+            <button type="submit" class="btn btn-primary">Enviar sugerencia</button>
+        </form>
 
         <h3 class = "text-center mb-5">También se puede poner en contacto con nosotros por:</h3>
 

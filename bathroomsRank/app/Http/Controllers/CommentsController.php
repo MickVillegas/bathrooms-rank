@@ -10,6 +10,14 @@ class CommentsController extends Controller
 {
     public function crearComentario(Request $request){
 
+        $request->validate([
+            'nombre_local' => 'required',
+            'comentario' => 'required|min:5',
+            'valoracion_dada' => 'required',
+            'nombre_usuario' => 'required',
+            'id_local' => 'required'
+        ]);
+
         Comment::create([
             'nombre_local' => $request->nombre_local,
             'comentario' => $request->comentario,

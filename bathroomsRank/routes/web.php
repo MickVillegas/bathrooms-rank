@@ -11,12 +11,19 @@ Route::get('/contacto', function () {
 
 // Recibir el formulario y enviar correo
 Route::post('/enviar-sugerencia', function (Request $request) {
-    $nombre = $request->input('nombreLocal');
-    $direccion = $request->input('direccionLocal');
+    // 1. Validar los datos
+    $request->validate([
+        'nombreLocal' => 'required|min:3',
+        'direccionLocal' => 'required|min:5',
+    ], [
+        // Mensajes personalizados (opcional)
+        'nombreLocal.required' => '* El nombre del local es obligatorio.',
+        'direccionLocal.required' => '* La dirección es necesaria para encontrar el local.',
+    ]);
 
-    // Envío del correo
-    Mail::to('mickprofesional@gmail.com')->send(new App\Mail\SugerenciaLocal($nombre, $direccion));
+    // 2. Si la validación pasa, enviar el mail
+    Mail::to('mickprofesional@gmail.com')->send(new SugerenciaLocal($request->nombreLocal, $request->direccionLocal));
 
     // Redirigimos atrás con un mensaje de éxito
-    return back()->with('status', 'Tu sugerencia para ' . $nombre . ' se ha enviado correctamente.');
+    return back()->with('status', 'Tu sugerencia para ' . $request->nombreLocal . ' se ha enviado correctamente.');
 })->name('enviar.sugerencia');

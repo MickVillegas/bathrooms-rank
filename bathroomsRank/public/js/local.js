@@ -152,61 +152,94 @@
         // Llamada inicial
         comentarios();
 
-        async function subirComentario(){
-
-            let seccionComentarios = document.querySelector(".comentariosNuevos");
-
-            if(valoracion == "positivo"){
-                await fetch("http://localhost:8000/api/unaValoracionPositiva/" + localStorage.getItem("id_local"), {
-                    method: "PUT",
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                })
+        async function subirComentario() {
+            const errVal = document.getElementById("error-valoracion");
+            const errNom = document.getElementById("error-nombre");
+            const errCom = document.getElementById("error-comentario");
+            
+            // Obtenemos los valores de texto directamente
+            const nombreValue = document.getElementById("nombre").value.trim();
+            const comentarioValue = document.getElementById("comentario").value.trim();
+        
+            errVal.classList.add("d-none");
+            errNom.classList.add("d-none");
+            errCom.classList.add("d-none");
+        
+            let hayError = false;
+        
+            if (!valoracion) {
+                errVal.classList.remove("d-none");
+                hayError = true;
             }
-            else{
-                await fetch("http://localhost:8000/api/unaValoracionNegativa/" + localStorage.getItem("id_local"), {
-                    method: "PUT",
-                    headers: {
-                        "Content-type": "application/json"
-                    }
-                })
+            if (nombreValue === "") {
+                errNom.classList.remove("d-none");
+                hayError = true;
             }
-
-            let comentario = document.getElementById("comentario").value;
-            let nombre = document.getElementById("nombre").value;
-
-            if(valoracion == "positivo"){
-                let comentarioEnFrontend = document.createElement("div");
-                let hr = document.createElement("hr");
-                comentarioEnFrontend.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ nombre +'</strong></div><div class = "col-6 text-success"><strong>Valoración: '+ valoracion +'</strong></div></div><p>'+ comentario +'</p>'
-                seccionComentarios.appendChild(comentarioEnFrontend);
-                seccionComentarios.appendChild(hr);
-            }
-            else{
-                let comentarioEnFrontend = document.createElement("div");
-                let hr = document.createElement("hr");
-                comentarioEnFrontend.innerHTML = '<div class = "row"><div class = "col-6"><strong>'+ nombre +'</strong></div><div class = "col-6 text-danger"><strong>Valoración: '+ valoracion +'</strong></div></div><p>'+ comentario +'</p>'
-                seccionComentarios.appendChild(comentarioEnFrontend);
-                seccionComentarios.appendChild(hr);
-            }
-
-
-            const subirCXomentario = {
-                nombre_local: nombreLocal,
-                comentario: comentario,
-                valoracion_dada: valoracion,
-                nombre_usuario: nombre,
-                id_local:localStorage.getItem("id_local")
+            if (comentarioValue === "") {
+                errCom.classList.remove("d-none");
+                hayError = true;
             }
         
-            const repositorio = await fetch ("http://localhost:8000/api/crearComentario" ,{
-                method: "POST",
-                body: JSON.stringify(subirCXomentario),
-                headers: {
-                    "Content-type": "application/json"
+            if (hayError) return;
+        
+            // --- PROCESO DE ENVÍO ---
+            
+            // 1. Actualizar contadores (PUT)
+            const urlValoracion = valoracion === "positivo" 
+                ? "http://localhost:8000/api/unaValoracionPositiva/" 
+                : "http://localhost:8000/api/unaValoracionNegativa/";
+        
+            await fetch(urlValoracion + localStorage.getItem("id_local"), {
+                method: "PUT",
+                headers: { "Content-type": "application/json" }
+            });
+        
+            // 2. Pintar en el frontend (Usando nombreValue y comentarioValue)
+            let seccionComentarios = document.querySelector(".comentariosNuevos");
+            let colorClass = valoracion === "positivo" ? "text-success" : "text-danger";
+            let comentarioEnFrontend = document.createElement("div");
+            comentarioEnFrontend.innerHTML = `
+                <div class="row">
+                    <div class="col-6"><strong>${nombreValue}</strong></div>
+                    <div class="col-6 ${colorClass}"><strong>Valoración: ${valoracion}</strong></div>
+                </div>
+                <p>${comentarioValue}</p>
+                <hr>`;
+            seccionComentarios.appendChild(comentarioEnFrontend);
+        
+            // 3. ENVIAR A LA BASE DE DATOS (POST)
+            const objetoComentario = {
+                nombre_local: nombreLocal, // Asegúrate de que nombreLocal tenga valor globalmente
+                comentario: comentarioValue, // ¡Importante usar el valor!
+                valoracion_dada: valoracion,
+                nombre_usuario: nombreValue, // ¡Importante usar el valor!
+                id_local: localStorage.getItem("id_local")
+            };
+        
+            try {
+                const respuesta = await fetch("http://localhost:8000/api/crearComentario", {
+                    method: "POST",
+                    body: JSON.stringify(objetoComentario),
+                    headers: { "Content-type": "application/json" }
+                });
+            
+                if (respuesta.ok) {
+                    let botonEnviado = document.getElementById("botonSubirComentario")
+                    botonEnviado.textContent = "";
+                    botonEnviado.classList.remove("btn-primary");
+                    botonEnviado.classList.add("btn-success");
+                    botonEnviado.textContent = "Comentario enviado";
+                    botonEnviado.disabled = true;
+                    document.getElementById("comentario").value = "";
+                    document.getElementById("nombre").value = "";
+                    // Resetear valoración para el próximo comentario
+                    valoracion = null; 
+                    document.getElementById("like").classList.replace("btn-success", "btn-outline-success");
+                    document.getElementById("dislike").classList.replace("btn-danger", "btn-outline-danger");
                 }
-            })
+            } catch (error) {
+                console.error("Error al subir:", error);
+            }
         }
 
         document.getElementById("botonSubirComentario").addEventListener("click", subirComentario);
